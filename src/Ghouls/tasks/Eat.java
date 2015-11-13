@@ -18,7 +18,6 @@ public class Eat extends Task<ClientContext> {
     }
 
 
-
     @Override
     public boolean activate() {
         boolean hasFood = ctx.backpack.select().id(Settings.getFoodId()).count() > 0;

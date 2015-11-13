@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@Script.Manifest(name = "Ghouls", description = "")
+@Script.Manifest(name = "Ghouls", description = "Kills ghouls at Canifis, start at bank or ghoul fields")
 public class Ghouls extends PollingScript<ClientContext> implements PaintListener {
     private List<Task> taskList = new ArrayList<Task>();
 

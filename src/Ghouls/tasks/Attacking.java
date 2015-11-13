@@ -38,14 +38,14 @@ public class Attacking extends Task<ClientContext> {
             }
         }).nearest().poll();
         if (!ghoul.inViewport()) {
-            if (ctx.movement.distance(ghoul.tile()) > 15) {//TODO
+            if (ctx.movement.distance(ghoul.tile()) > 15) {
                 ctx.movement.findPath(ghoul).traverse();
                 Condition.wait(new Callable<Boolean>() {
                     @Override
                     public Boolean call() throws Exception {
                         return ghoul.inViewport();
                     }
-                }, 500, 5);
+                }, 200, 20);
             }
             ctx.camera.turnTo(ghoul);
             Condition.wait(new Callable<Boolean>() {
@@ -53,7 +53,7 @@ public class Attacking extends Task<ClientContext> {
                 public Boolean call() throws Exception {
                     return ghoul.inViewport();
                 }
-            }, 500, 5);
+            }, 200, 5);
         }
         ghoul.interact("Attack");
         Condition.wait(new Callable<Boolean>() {
@@ -61,6 +61,6 @@ public class Attacking extends Task<ClientContext> {
             public Boolean call() throws Exception {
                 return ctx.players.local().inCombat();
             }
-        });
+        }, 500, 5);
     }
 }
