@@ -22,10 +22,7 @@ public class Looting extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        boolean charmOnGround = !ctx.groundItems.select().id(Settings.getCharmsToLoot()).isEmpty();
-        boolean hasFood = ctx.backpack.select().id(Settings.getFoodId()).count() > Settings.getFoodCount();
-        boolean invFull = ctx.backpack.count() == 28;
-        return charmOnGround && hasFood && !invFull;
+        return !ctx.groundItems.select().id(Settings.getCharmsToLoot()).isEmpty() && ctx.backpack.select().id(Settings.getFoodId()).count() > Settings.getFoodCount() && ctx.backpack.count() != 28;
     }
 
     @Override

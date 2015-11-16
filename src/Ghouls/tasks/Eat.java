@@ -1,10 +1,10 @@
 package Ghouls.tasks;
 
-import Ghouls.Ghouls;
 import Ghouls.resources.Settings;
 import Ghouls.resources.Task;
 import org.powerbot.script.Condition;
 import org.powerbot.script.rt6.ClientContext;
+import org.powerbot.script.rt6.Hud;
 import org.powerbot.script.rt6.Item;
 
 import java.util.concurrent.Callable;
@@ -20,14 +20,13 @@ public class Eat extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        boolean hasFood = ctx.backpack.select().id(Settings.getFoodId()).count() > 0;
-        boolean needHeal = ctx.players.local().healthPercent() < Settings.getEatPercent();
-        return hasFood && needHeal;
+        if (!ctx.hud.opened(Hud.Window.BACKPACK))
+            ctx.hud.open(Hud.Window.BACKPACK);
+        return ctx.backpack.select().id(Settings.getFoodId()).count() > 0 && ctx.players.local().healthPercent() < Settings.getEatPercent();
     }
 
     @Override
     public void execute() {
-        System.out.println("Eating");
         Item food = ctx.backpack.poll();
         food.interact("Eat");
         Condition.wait(new Callable<Boolean>() {

@@ -1,10 +1,7 @@
 package Ghouls;
 
 import Ghouls.resources.Task;
-import Ghouls.tasks.Attacking;
-import Ghouls.tasks.Bank;
-import Ghouls.tasks.Eat;
-import Ghouls.tasks.Looting;
+import Ghouls.tasks.*;
 import org.powerbot.script.PaintListener;
 import org.powerbot.script.PollingScript;
 import org.powerbot.script.Script;
@@ -26,7 +23,8 @@ public class Ghouls extends PollingScript<ClientContext> implements PaintListene
     public static int charmsPicked = 0;
 
     public void start() {
-        taskList.addAll(Arrays.asList(new Attacking(ctx), new Eat(ctx), new Bank(ctx), new Looting(ctx)));
+        taskList.addAll(Arrays.asList(new Attacking(ctx), new Eat(ctx), new Looting(ctx),
+                new Bank(ctx), new ToBank(ctx), new ToGhouls(ctx)));
         startGui();
     }
 

@@ -21,22 +21,22 @@ public class Attacking extends Task<ClientContext> {
 
     @Override
     public boolean activate() {
-        boolean ghoulsNearby = !ctx.npcs.select().id(ghoulIds).isEmpty();
-        boolean hasFood = ctx.backpack.select().id(Settings.getFoodId()).count() > Settings.getFoodCount();
-        boolean inCombat = ctx.players.local().interacting().valid();
-        boolean inMotion = ctx.players.local().inMotion();
-        return ghoulsNearby && hasFood && !inCombat && !inMotion;
+        boolean ghoulsNearby = !ctx.npcs.select(new Filter<Npc>() {
+            @Override
+            public boolean accept(Npc npc) {
+                return npc.animation() != 836;
+            }
+        }).id(ghoulIds).isEmpty();
+
+        return ghoulsNearby && ctx.backpack.select().id(Settings.getFoodId()).count() > Settings.getFoodCount()
+                && !ctx.players.local().inMotion() && !inCombat();
     }
 
     @Override
     public void execute() {
-        System.out.println("attacking");
-        final Npc ghoul = ctx.npcs.select(new Filter<Npc>() {
-            @Override
-            public boolean accept(Npc npc) {
-                return !npc.valid();
-            }
-        }).nearest().poll();
+        System.out.println("Attacking");
+        final Npc ghoul = ctx.npcs.poll();
+        System.out.println(ghoul);
         if (!ghoul.inViewport()) {
             if (ctx.movement.distance(ghoul.tile()) > 15) {
                 ctx.movement.findPath(ghoul).traverse();
@@ -45,7 +45,7 @@ public class Attacking extends Task<ClientContext> {
                     public Boolean call() throws Exception {
                         return ghoul.inViewport();
                     }
-                }, 200, 20);
+                }, 200, 10);
             }
             ctx.camera.turnTo(ghoul);
             Condition.wait(new Callable<Boolean>() {
@@ -53,7 +53,7 @@ public class Attacking extends Task<ClientContext> {
                 public Boolean call() throws Exception {
                     return ghoul.inViewport();
                 }
-            }, 200, 5);
+            }, 200, 10);
         }
         ghoul.interact("Attack");
         Condition.wait(new Callable<Boolean>() {
@@ -61,6 +61,10 @@ public class Attacking extends Task<ClientContext> {
             public Boolean call() throws Exception {
                 return ctx.players.local().inCombat();
             }
-        }, 500, 5);
+        }, 200, 10);
+    }
+
+    public boolean inCombat() {
+        return ctx.players.local().inCombat() || (ctx.movement.distance(ctx.npcs.nearest().poll().tile()) < 3 && ctx.players.local().interacting().valid());
     }
 }
